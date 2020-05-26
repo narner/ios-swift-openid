@@ -16,9 +16,9 @@ class ViewController: UIViewController {
     @IBOutlet weak var logTextView: UITextView!
         
     lazy var config: OIDServiceConfiguration! = {
-        guard let authorizeURL = URL(string: ""),
-            let tokenURL = URL(string: ""),
-            var logoutURL = URL(string: "") else {
+        guard let authorizeURL = URL(string: "https://saml.pre.coop.dk/nidp/oauth/nam/authz"),
+            let tokenURL = URL(string: "https://saml.pre.coop.dk/nidp/oauth/nam/token"),
+            var logoutURL = URL(string: "https://saml.pre.coop.dk/nidp/app/logout") else {
             log(text: "Please check the configuration parameters!")
             return nil
         }
@@ -27,12 +27,17 @@ class ViewController: UIViewController {
         return OIDServiceConfiguration(authorizationEndpoint: authorizeURL, tokenEndpoint: tokenURL, issuer: nil, registrationEndpoint: nil, endSessionEndpoint: logoutURL)
     }()
     
-    private let clientId = ""
-    private let authorizeScopes: [String] = []
+    private let clientId = "9d3bf844-ff98-4a82-8803-6e05b316c9b4"
+    private let authorizeScopes = ["oic"]
     private let clientSecret: String? = nil
-    private let redirectURL = URL(string: "")
-    private let authorizeParameters: [String: String]? = [:]
-    private let tokenParameters: [String: String]? = nil
+    private let redirectURL = URL(string: "coop://dk.bridgeit.coop.employeeapp/")
+    private let authorizeParameters: [String: String]? = [
+      "acr_values" : "http://coop/level2a",
+      "resourceServer" : "COOPIdentityProvider"
+    ]
+    private let tokenParameters: [String: String]? = [
+        "resourceServer" : "COOPIdentityProvider"
+    ]
     private static var currentAuthorizeFlow: OIDExternalUserAgentSession?
     private var authorizationState: OIDAuthState? = nil
     
