@@ -6,5 +6,6 @@ target 'OpenId' do
   use_frameworks!
 
   pod 'AppAuth'
+  pod 'KeychainSwift'
 
 end
