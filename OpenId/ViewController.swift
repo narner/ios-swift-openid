@@ -7,35 +7,36 @@
 
 import UIKit
 import AppAuth
+import KeychainSwift
 
 class ViewController: UIViewController {
 
     @IBOutlet weak var statusLabel: UILabel!
     
     @IBOutlet weak var logTextView: UITextView!
-    
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        // Do any additional setup after loading the view.
-    }
-    
+        
     lazy var config: OIDServiceConfiguration! = {
-        guard let authorizeURL = URL(string: ""),
-            let tokenURL = URL(string: ""),
             let issuerURL = URL(string: ""),
             let registrationURL = URL(string: ""),
-            let logoutURL = URL(string: "") else {
+        guard let authorizeURL = URL(string: "https://saml.pre.coop.dk/nidp/oauth/nam/authz"),
+            let tokenURL = URL(string: "https://saml.pre.coop.dk/nidp/oauth/nam/token"),
+            var logoutURL = URL(string: "https://saml.pre.coop.dk/nidp/app/logout") else {
             return nil
         }
         return OIDServiceConfiguration(authorizationEndpoint: authorizeURL, tokenEndpoint: tokenURL, issuer: issuerURL, registrationEndpoint: registrationURL, endSessionEndpoint: logoutURL)
     }()
     
-    let clientId = ""
     let clientSecret: String? = nil
-    let redirectURL = URL(string: "")
-    let authorizeParameters: [String: String]? = nil
-    var currentAuthorizeFlow: OIDExternalUserAgentSession?
-
+    private let clientId = "9d3bf844-ff98-4a82-8803-6e05b316c9b4"
+    private let authorizeScopes = ["oic"]
+    private let redirectURL = URL(string: "coop://dk.bridgeit.coop.employeeapp/")
+    private let authorizeParameters: [String: String]? = [
+      "acr_values" : "http://coop/level2a",
+      "resourceServer" : "COOPIdentityProvider"
+    ]
+    private let tokenParameters: [String: String]? = [
+        "resourceServer" : "COOPIdentityProvider"
+    ]
     @IBAction func doAuthorize(_ sender: Any) {
         guard let redirectURL = redirectURL else {
             return
